@@ -13,7 +13,7 @@ def comenzar_juego():
     menu.eliminar()
     puntaje = pilas.actores.Puntaje(+200, +200, color=pilas.colores.azul)
     
-    class Crear_Aceituna(pilasengine.actores.Actor):       
+    class Burbujaazul(pilasengine.actores.Actor):       
           
         def iniciar(self):
             self.imagen = "azul.png"
@@ -21,6 +21,7 @@ def comenzar_juego():
             self.x = pilas.azar(-200, 200)
             self.y = 290
             self.velocidad = pilas.azar(10, 40) / 10.0
+            self.escala = 0.5
 
         def actualizar(self):
             self.rotacion += 10
@@ -30,7 +31,7 @@ def comenzar_juego():
             if self.y < -300:
                 self.eliminar()
                   
-    class Crear_Bomba(pilasengine.actores.Actor):
+    class Burbujanegra(pilasengine.actores.Actor):
         
         def iniciar(self):
             self.imagen = "negra.png"
@@ -38,6 +39,7 @@ def comenzar_juego():
             self.x = pilas.azar(-400, 400)
             self.y = 250
             self.velocidad = pilas.azar(10, 20) / 10.0
+            self.escala = 0.5
 
         def actualizar(self):
             self.rotacion += 12
@@ -47,7 +49,7 @@ def comenzar_juego():
             if self.y < -500:
                 self.eliminar()
                 
-    class Crear_Manzana(pilasengine.actores.Actor):
+    class Burbujaroja(pilasengine.actores.Actor):
         
         def iniciar(self):
             self.imagen = "roja.png"
@@ -77,11 +79,11 @@ def comenzar_juego():
     
 
     def Activar_Enemigo():
-        actor =Crear_Aceituna(pilas)
+        actor =Burbujaazul(pilas)
         enemigos.agregar(actor)
-        actor = Crear_Bomba(pilas)
+        actor = Burbujaroja(pilas)
         enemigos.agregar(actor)
-        actor =Crear_Manzana(pilas)
+        actor =Burbujanegra(pilas)
         enemigos.agregar(actor)
         
             
