@@ -1,5 +1,6 @@
 # coding: utf-8
 import pilasengine
+import pilasengine
 import os
 import random
 
@@ -11,51 +12,89 @@ fondojuego=True
 def comenzar_juego():
     menu.eliminar()
     puntaje = pilas.actores.Puntaje(+200, +200, color=pilas.colores.azul)
-class Bur_azul(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "azul.png"
-class Bur_roja(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "roja.png"
-class Bur_blanca(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "blanca.png"
-class Bur_negra(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "negra.png"
-class Nave(pilasengine.actores.Actor):
-
-    def iniciar(self):
-        self.imagen = "nave.png"
-        
-        self.x += 0
-        self.y   -= 220
-        
-    def dar_vuelta(self):
-        self.rotacion = [180]
     
-    def actualizar(self):
-        if pilas.control.izquierda:
-            self.x -= 5
-            
-            self.espejado = True
-        if pilas.control.derecha:
-            self.x += 5
-           
-            self.espejado = False
-    def disparo_doble():
+    class Crear_Aceituna(pilasengine.actores.Actor):       
+          
+        def iniciar(self):
+            self.imagen = "azul.png"
+            self.aprender( pilas.habilidades.PuedeExplotarConHumo )
+            self.x = pilas.azar(-200, 200)
+            self.y = 290
+            self.velocidad = pilas.azar(10, 40) / 10.0
+
+        def actualizar(self):
+            self.rotacion += 10
+            self.y -= self.velocidad
+
+            # Elimina el objeto cuando sale de la pantalla.
+            if self.y < -300:
+                self.eliminar()
+                  
+    class Crear_Bomba(pilasengine.actores.Actor):
+        
+        def iniciar(self):
+            self.imagen = "negra.png"
+            self.aprender( pilas.habilidades.PuedeExplotar)
+            self.x = pilas.azar(-400, 400)
+            self.y = 250
+            self.velocidad = pilas.azar(10, 20) / 10.0
+
+        def actualizar(self):
+            self.rotacion += 12
+            self.y -= self.velocidad
+
+            # Elimina el objeto cuando sale de la pantalla.
+            if self.y < -500:
+                self.eliminar()
+                
+    class Crear_Manzana(pilasengine.actores.Actor):
+        
+        def iniciar(self):
+            self.imagen = "roja.png"
+            self.aprender( pilas.habilidades.PuedeExplotar)
+            self.x = pilas.azar(-200, 200)
+            self.y = 250
+            self.velocidad = pilas.azar(10, 30) / 10.0
+            self.escala = 0.5
+        def actualizar(self):
+            self.rotacion += 8
+            self.y -= self.velocidad
+
+            # Elimina el objeto cuando sale de la pantalla.
+            if self.y < -500:
+                self.eliminar()
+
+    class disparos():
+        
+        def disparo_doble():
             nave.aprender(pilas.habilidades.Disparar,
             municion=pilas.municion.BalaDoble,
             offset_disparo=(0, 30))
                 
-  
+    fondo = pilas.fondos.Galaxia(dy=-5)
+    
+    enemigos = pilas.actores.Grupo()
+    
 
-def salir():
-    pilas.terminar()
+    def Activar_Enemigo():
+        actor =Crear_Aceituna(pilas)
+        enemigos.agregar(actor)
+        actor = Crear_Bomba(pilas)
+        enemigos.agregar(actor)
+        actor =Crear_Manzana(pilas)
+        enemigos.agregar(actor)
+        
+            
+    pilas.tareas.siempre(0.50, Activar_Enemigo)
+    nave = pilas.actores.Nave(y = -200)
+    nave.aprender(pilas.habilidades.LimitadoABordesDePantalla)
+    nave.definir_enemigos(enemigos, puntaje.aumentar)
+    pilas.colisiones.agregar(nave, enemigos, nave.eliminar)
+
+    pilas.avisar("Dispara co ESPACIO y muevete con las FLECHAS del teclado...")
+
+    def salir():
+        pilas.terminar()
     
     opciones = pilas.interfaz.ListaSeleccion(['Score'], salir)
     opciones.x = +195
@@ -66,16 +105,10 @@ def salir_del_juego():
 
 
 menu=pilas.actores.Menu([
-        
         ('Comenzar Juego', comenzar_juego),
         ('Salir', salir_del_juego),
         ])
         
-
- 
-  
-alien=Nave(pilas)
-
 
 
 pilas.ejecutar()
