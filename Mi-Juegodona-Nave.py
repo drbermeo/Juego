@@ -13,6 +13,12 @@ class Burbuja2(pilasengine.actores.Actor):
           self.imagen = "burbuja2.png"
  
 burbuja2=Burbuja2(pilas)
+class Nave(pilasengine.actores.Actor):
+
+    def iniciar(self):
+          self.imagen = "nave.png"
+ 
+nave=Nave(pilas)
 class Burbuja3(pilasengine.actores.Actor):
 
     def iniciar(self):
