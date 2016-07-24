@@ -7,40 +7,6 @@ pilas = pilasengine.iniciar()
 fondojuego=pilas.fondos.Fondo()
 fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
 fondojuego=True
-class Burbuja2(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "burbuja2.png"
- 
-burbuja2=Burbuja2(pilas)
-class Nave(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "nave.png"
- 
-nave=Nave(pilas)
-class Burbuja3(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "burbuja3.png"
-          burbuja3.decir(u"¡oh, no, humanos!")
-burbuja3=Burbuja3(pilas)            
-burbuja3.x= 290
-class Burbuja4(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "burbuja4.png"
-  
-burbuja4=Burbuja4(pilas)            
-burbuja4.x= -290
-class Burbuja5(pilasengine.actores.Actor):
-
-    def iniciar(self):
-          self.imagen = "burbuja5.png"
-  
-burbuja5=Burbuja5(pilas)            
-burbuja5.x= 0
-burbuja5.y=185
 
 def comenzar_juego():
     menu.eliminar()
