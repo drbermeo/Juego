@@ -9,8 +9,12 @@ fondojuego=pilas.fondos.Fondo()
 fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
 fondojuego=True
 
+
 def comenzar_juego():
+    
     menu.eliminar()
+    alien.eliminar()
+    
     puntaje = pilas.actores.Puntaje(+200, +200, color=pilas.colores.azul)
     
     class Burbujaazul(pilasengine.actores.Actor):       
@@ -110,7 +114,7 @@ def comenzar_juego():
         enemigos.agregar(actor)
         
             
-    pilas.tareas.siempre(0.50, Activar_Enemigo)
+    pilas.tareas.siempre(0.5, Activar_Enemigo)
     bur = Burbujablanca(pilas)
     naveroja = pilas.actores.NaveRoja(y = -200)
     naveroja.escala = 0.5
@@ -122,16 +126,24 @@ def comenzar_juego():
     pilas.avisar("Dispara a la Burbuja Blanca.")
 
     def salir():
-        pilas.terminar()
-    
+        pilas.eliminar()
+        
     opciones = pilas.interfaz.ListaSeleccion(['Score'], salir)
     opciones.x = +195
     opciones.y = +178
     
 
 def salir_del_juego():
-    pilas.terminar()
+    
+    class Alien(pilasengine.actores.Actor):
 
+       def iniciar(self):
+         self.imagen = "alien.png"
+         self.x = 0
+         self.y = -160
+         self.escala = 1
+    alien = Alien(pilas)
+    alien.decir(u"¡Animate, juega!")
 
 menu=pilas.actores.Menu([
         ('Comenzar Juego', comenzar_juego),
