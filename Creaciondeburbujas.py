@@ -18,9 +18,9 @@ def comenzar_juego():
         def iniciar(self):
             self.imagen = "azul.png"
             self.aprender( pilas.habilidades.PuedeExplotarConHumo )
-            self.x = pilas.azar(-200,200)
+            self.x = pilas.azar(-100,100)
             self.y = 30
-            self.velocidad = pilas.azar(30, 40) / 10.0
+            self.velocidad = pilas.azar(30, 50) / 10.0
             self.escala = 0.5
 
         def actualizar(self):
@@ -70,18 +70,25 @@ def comenzar_juego():
         def iniciar(self):
             self.imagen = "blanca.png"
             self.aprender( pilas.habilidades.PuedeExplotar)
-            self.x = pilas.azar(-200, 200)
-            self.y = 250
-            self.velocidad = pilas.azar(10, 30) / 10.0
+            self.x = 0
+            self.y = 160
             self.escala = 0.5
+            
+        def saludar(self):
+            self.decir("Aqui estoy!!!, Revientame") 
+        
+        def dar_vuelta(self):
+            self.rotacion = [360]  
+        
         def actualizar(self):
-            self.rotacion += 8
-            self.y -= self.velocidad
+            
+            self.rotacion += 2
+            
+            
 
-            # Elimina el objeto cuando sale de la pantalla.
-            if self.y < -500:
-                self.eliminar()
-
+        
+    bur = Burbujablanca(pilas)
+    bur.saludar()
     class disparos():
         
         def disparo_doble():
@@ -92,10 +99,7 @@ def comenzar_juego():
     fondo = pilas.fondos.Galaxia(dy=-5)
     
     enemigos = pilas.actores.Grupo()
-    blancas=pilas.actores.Grupo()
-    def Activar_Principal():
-        actor=Burbujablanca(pilas)
-        blancas.agregar(actor)
+              
         
     def Activar_Enemigo():
         actor =Burbujaazul(pilas)
@@ -107,15 +111,15 @@ def comenzar_juego():
         
             
     pilas.tareas.siempre(0.50, Activar_Enemigo)
-    pilas.tareas.siempre(0.50, Activar_Principal)
+    bur = Burbujablanca(pilas)
     naveroja = pilas.actores.NaveRoja(y = -200)
     naveroja.escala = 0.5
     naveroja.aprender(pilas.habilidades.LimitadoABordesDePantalla)
-    naveroja.definir_enemigos(blancas,puntaje.aumentar)
+    naveroja.definir_enemigos(enemigos,puntaje.aumentar)
     pilas.colisiones.agregar(naveroja, enemigos, naveroja.eliminar)
     
     
-    pilas.avisar("Dispara con ESPACIO y muevete con las FLECHAS del teclado...")
+    pilas.avisar("Dispara a la Burbuja Blanca.")
 
     def salir():
         pilas.terminar()
@@ -123,9 +127,7 @@ def comenzar_juego():
     opciones = pilas.interfaz.ListaSeleccion(['Score'], salir)
     opciones.x = +195
     opciones.y = +178
-    opciones = pilas.interfaz.ListaSeleccion(['Score2'], salir)
-    opciones.x = +195
-    opciones.y = +178
+    
 
 def salir_del_juego():
     pilas.terminar()
