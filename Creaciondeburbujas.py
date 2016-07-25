@@ -3,21 +3,28 @@ import pilasengine
 import pilasengine
 import os
 import random
-sonido1 = pilas.musica.cargar('burbujita.mp3')
-sonido1.reproducir()
-  
+
+pilas = pilasengine.iniciar()
+fondojuego=pilas.fondos.Fondo()
+fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
+fondojuego =True    
+menu=pilas.actores.Menu([
+        ('Comenzar Juego', comenzar_juego),
+        ('Salir', salir_del_juego),
+        ])
 
 class Estado:
     
-    
+
+  
     def __init__(self, nave):
         self.nave = nave
         self.iniciar()
-       
+
     def iniciar(self):
         pass
-        
-      
+   
+    
 
 class Ingresando(Estado):
 
@@ -26,7 +33,7 @@ class Ingresando(Estado):
         self.contador = 0
         self.nave.x = -200
         self.nave.x = [-300], 0.5
-       
+
     def actualizar(self):
         self.contador += 1
 
@@ -62,7 +69,7 @@ class Perdiendo(Estado):
     def actualizar(self):
         self.nave.rotacion += 7
         self.nave.escala += 0.01
-        self.nave.x += self.velocidad
+        self.nave.x -= self.velocidad
         self.velocidad += 0.2
         self.nave.y -= 1
 
@@ -103,9 +110,7 @@ class Nave(pilasengine.actores.Actor):
     def perder(self):
         self.estado = Perdiendo(self)
         t = pilas.actores.Texto("Game Over")
-        sonido1.detener()
-        sonido2=pilas.musica.cargar('game.mp3')
-        sonido2.reproducir()
+        
         t.escala = 0
         t.escala = [1], 0.5
 
@@ -186,7 +191,17 @@ def cuanto_toca_enemigo(nave, enemigo):
 
 pilas.colisiones.agregar(nave, enemigos, cuanto_toca_enemigo)
 
+
+def salir():
+        pilas.eliminar()
+           
+    
+def salir_del_juego():
+    
+    pilas.terminar()
          
-  
-         
+
+
+
+
 pilas.ejecutar()
