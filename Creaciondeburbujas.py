@@ -1,38 +1,32 @@
-# coding: utf-8
-import pilasengine
+
 import pilasengine
 import os
 import random
-
+sonido1 = pilas.musica.cargar('burbujita.mp3')
+sonido1.reproducir()
 pilas = pilasengine.iniciar()
-fondojuego=pilas.fondos.Fondo()
-fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
-fondojuego =True    
-menu=pilas.actores.Menu([
-        ('Comenzar Juego', comenzar_juego),
-        ('Salir', salir_del_juego),
-        ])
-
+def comenzar_juego():
+        menu.eliminar()
+        fondo=pilas.fondos.Galaxia()
 class Estado:
-    
 
-  
+    
     def __init__(self, nave):
         self.nave = nave
         self.iniciar()
-
+       
     def iniciar(self):
         pass
-   
-    
-
+        
+       
 class Ingresando(Estado):
 
     def iniciar(self):
+    
         self.nave.definir_animacion([3, 4])
         self.contador = 0
         self.nave.x = -200
-        self.nave.x = [-300], 0.5
+        self.nave.x = [-200], 0.5
 
     def actualizar(self):
         self.contador += 1
@@ -44,7 +38,7 @@ class Volando(Estado):
 
     def iniciar(self):
         self.nave.definir_animacion([3, 4])
-
+        self.nave.decir('A jugar')
     def actualizar(self):
         velocidad = 5
 
@@ -69,7 +63,7 @@ class Perdiendo(Estado):
     def actualizar(self):
         self.nave.rotacion += 7
         self.nave.escala += 0.01
-        self.nave.x -= self.velocidad
+        self.nave.x += self.velocidad
         self.velocidad += 0.2
         self.nave.y -= 1
 
@@ -110,9 +104,11 @@ class Nave(pilasengine.actores.Actor):
     def perder(self):
         self.estado = Perdiendo(self)
         t = pilas.actores.Texto("Game Over")
-        
+        sonido1.detener()
+        sonido2=pilas.musica.cargar('game.mp3')
+        sonido2.reproducir()
         t.escala = 0
-        t.escala = [1], 0.5
+        t.escala = [3], 0.5
 
 class Enemigo(pilasengine.actores.Actor):
 
@@ -134,7 +130,7 @@ class Item(pilasengine.actores.Actor):
         self.escala = 0.5
         self.izquierda = 320
         self.y = random.randint(-210, 210)
-        self.decir("Hola") 
+        self.decir("Revientame") 
        
 
     def actualizar(self):
@@ -149,10 +145,12 @@ class Item(pilasengine.actores.Actor):
 pilas = pilasengine.iniciar(capturar_errores=False)
 
    
-fondojuego=pilas.fondos.Galaxia()
+fondojuego=pilas.fondos.Fondo()
+fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
+fondojuego=True
 actor=Enemigo(pilas)
 
-puntos = pilas.actores.Puntaje(x=-290, y=210)
+puntos = pilas.actores.Puntaje(200,200, color= pilas.colores.blanco)
 nave = Nave(pilas)
 items = []
 enemigos = []
@@ -194,7 +192,9 @@ pilas.colisiones.agregar(nave, enemigos, cuanto_toca_enemigo)
 
 def salir():
         pilas.eliminar()
-           
+        opciones = pilas.interfaz.ListaSeleccion(['Score'], salir)
+        opciones.x = +195
+        opciones.y = +178   
     
 def salir_del_juego():
     
@@ -202,6 +202,9 @@ def salir_del_juego():
          
 
 
-
-
+menu=pilas.actores.Menu([
+        ('Comenzar Juego', comenzar_juego),
+        ('Salir', salir_del_juego),
+        ])
+pilas.avisar('Bienvenidos a Whitebublle')
 pilas.ejecutar()
