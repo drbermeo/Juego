@@ -28,7 +28,42 @@ class Estado:
        
     def iniciar(self):
         pass
+#Clase ingresando que posee atributos de la nave
+class Ingresando(Estado):
+
+    def iniciar(self):
+        self.nave.definir_animacion([3, 4])
+        self.contador = 0
+        self.nave.x = -380
+        self.nave.x = [-170], 0.5
+
+    def actualizar(self):
+        self.contador += 1
+      
+        if self.contador > 50:
+            self.nave.estado = Volando(self.nave)
+
+class Volando(Estado):
+
+    def iniciar(self):
+        self.nave.definir_animacion([3, 4])
+
+    def actualizar(self):
+        velocidad = 5
+
+        if pilas.escena.control.arriba:
+            self.nave.y += velocidad
+        elif pilas.escena.control.abajo:
+            self.nave.y -= velocidad
+
+        if self.nave.y > 210:
+            self.nave.y = 210
         
+        elif self.nave.y < -210:
+            self.nave.y = -210
+
+
+          
   #Clase que ejecutara lineas de codigo cuando la nave pierda  
 class Perdiendo(Estado):
 
