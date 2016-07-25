@@ -5,19 +5,25 @@ import os
 import random
 
 pilas = pilasengine.iniciar()
-
+fondojuego=pilas.fondos.Fondo()
+fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
+fondojuego =True    
+menu=pilas.actores.Menu([
+        ('Comenzar Juego', comenzar_juego),
+        ('Salir', salir_del_juego),
+        ])
 
 class Estado:
     
+
+  
     def __init__(self, nave):
         self.nave = nave
         self.iniciar()
 
     def iniciar(self):
         pass
-    def comenzar_juego():
-    
-        menu.eliminar()
+   
     
 
 class Ingresando(Estado):
@@ -142,6 +148,8 @@ class Item(pilasengine.actores.Actor):
 
 pilas = pilasengine.iniciar(capturar_errores=False)
 
+   
+fondojuego=pilas.fondos.Galaxia()
 actor=Enemigo(pilas)
 
 puntos = pilas.actores.Puntaje(x=-290, y=210)
@@ -192,13 +200,7 @@ def salir_del_juego():
     
     pilas.terminar()
          
-fondojuego=pilas.fondos.Fondo()
-fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
-fondojuego=True        
-menu=pilas.actores.Menu([
-        ('Comenzar Juego', comenzar_juego),
-        ('Salir', salir_del_juego),
-        ])
+
 
 
 
