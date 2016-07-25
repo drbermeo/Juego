@@ -5,151 +5,201 @@ import os
 import random
 
 pilas = pilasengine.iniciar()
-fondojuego=pilas.fondos.Fondo()
-fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
-fondojuego=True
 
 
-def comenzar_juego():
+class Estado:
     
-    menu.eliminar()
-    alien.eliminar()
+    def __init__(self, nave):
+        self.nave = nave
+        self.iniciar()
+
+    def iniciar(self):
+        pass
+    def comenzar_juego():
     
-    puntaje = pilas.actores.Puntaje(+200, +200, color=pilas.colores.azul)
+        menu.eliminar()
     
-    class Burbujaazul(pilasengine.actores.Actor):       
-          
-        def iniciar(self):
-            self.imagen = "azul.png"
-            self.aprender( pilas.habilidades.PuedeExplotarConHumo )
-            self.x = pilas.azar(-100,100)
-            self.y = 30
-            self.velocidad = pilas.azar(30, 50) / 10.0
-            self.escala = 0.5
 
-        def actualizar(self):
-            self.rotacion += 10
-            self.y -= self.velocidad
+class Ingresando(Estado):
 
-            # Elimina el objeto cuando sale de la pantalla.
-            if self.y < -300:
-                self.eliminar()
-                  
-    class Burbujanegra(pilasengine.actores.Actor):
-        
-        def iniciar(self):
-            self.imagen = "negra.png"
-            self.aprender( pilas.habilidades.PuedeExplotar)
-            self.x = pilas.azar(-200, 200)
-            self.y = 250
-            self.velocidad = pilas.azar(10, 20) / 10.0
-            self.escala = 0.5
+    def iniciar(self):
+        self.nave.definir_animacion([3, 4])
+        self.contador = 0
+        self.nave.x = -200
+        self.nave.x = [-300], 0.5
 
-        def actualizar(self):
-            self.rotacion += 12
-            self.y -= self.velocidad
+    def actualizar(self):
+        self.contador += 1
 
-            # Elimina el objeto cuando sale de la pantalla.
-            if self.y < -500:
-                self.eliminar()
-                
-    class Burbujaroja(pilasengine.actores.Actor):
-        
-        def iniciar(self):
-            self.imagen = "roja.png"
-            self.aprender( pilas.habilidades.PuedeExplotar)
-            self.x = pilas.azar(-200, 200)
-            self.y = 250
-            self.velocidad = pilas.azar(10, 30) / 10.0
-            self.escala = 0.5
-        def actualizar(self):
-            self.rotacion += 8
-            self.y -= self.velocidad
+        if self.contador > 50:
+            self.nave.estado = Volando(self.nave)
 
-            # Elimina el objeto cuando sale de la pantalla.
-            if self.y < -500:
-                self.eliminar()
-    class Burbujablanca(pilasengine.actores.Actor):
-        
-        def iniciar(self):
-            self.imagen = "blanca.png"
-            self.aprender( pilas.habilidades.PuedeExplotar)
-            self.x = 0
-            self.y = 160
-            self.escala = 0.5
-            
-        def saludar(self):
-            self.decir("Aqui estoy!!!, Revientame") 
-        
-        def dar_vuelta(self):
-            self.rotacion = [360]  
-        
-        def actualizar(self):
-            
-            self.rotacion += 2
-            
-            
+class Volando(Estado):
 
+    def iniciar(self):
+        self.nave.definir_animacion([3, 4])
+
+    def actualizar(self):
+        velocidad = 5
+
+        if pilas.escena.control.arriba:
+            self.nave.y += velocidad
+        elif pilas.escena.control.abajo:
+            self.nave.y -= velocidad
+
+        if self.nave.y > 210:
+            self.nave.y = 210
+        elif self.nave.y < -210:
+            self.nave.y = -210
+
+
+class Perdiendo(Estado):
+
+    def iniciar(self):
+        self.nave.definir_animacion([0])
+        self.nave.centro = ('centro', 'centro')
+        self.velocidad = -2
+
+    def actualizar(self):
+        self.nave.rotacion += 7
+        self.nave.escala += 0.01
+        self.nave.x -= self.velocidad
+        self.velocidad += 0.2
+        self.nave.y -= 1
+
+
+class Nave(pilasengine.actores.Actor):
+
+    def iniciar(self):
         
-    bur = Burbujablanca(pilas)
-    bur.saludar()
-    class disparos():
+        self.imagen = "combatiente.png"
+        self.definir_animacion([0])
+        self.centro = (140, 59)
+        self.radio_de_colision = 40
+        self.x = -170
+        self.estado = Ingresando(self)
+        self.contador = 0
+        self.escala = 0.1
+    def definir_animacion(self, cuadros):
+        self.paso = 0
+        self.contador = 0
+        self.cuadros = cuadros
+
+    def actualizar(self):
+        self.estado.actualizar()
+        self.actualizar_animacion()
+
+    def actualizar_animacion(self):
+        self.contador += 0.2
+
+        if (self.contador > 1):
+            self.contador = 0
+            self.paso += 1
+
+            if self.paso >= len(self.cuadros):
+                self.paso = 0
+
+        self.imagen.definir_cuadro(self.cuadros[self.paso])
+
+    def perder(self):
+        self.estado = Perdiendo(self)
+        t = pilas.actores.Texto("Game Over")
         
-        def disparo_doble():
-            naveroja.aprender(pilas.habilidades.Disparar,
-            municion=pilas.municion.BalaDoble,
-            offset_disparo=(0, 30))
-                
-    fondo = pilas.fondos.Galaxia(dy=-5)
+        t.escala = 0
+        t.escala = [1], 0.5
+
+class Enemigo(pilasengine.actores.Actor):
+
+    def iniciar(self):
+        
+        self.imagen = "roja.png"
+        self.izquierda = 320
+        self.escala = 0.5
+        self.y = random.randint(-210, 210)
     
-    enemigos = pilas.actores.Grupo()
-              
-        
-    def Activar_Enemigo():
-        actor =Burbujaazul(pilas)
-        enemigos.agregar(actor)
-        actor = Burbujaroja(pilas)
-        enemigos.agregar(actor)
-        actor =Burbujanegra(pilas)
-        enemigos.agregar(actor)
-        
-            
-    pilas.tareas.siempre(0.5, Activar_Enemigo)
-    bur = Burbujablanca(pilas)
-    naveroja = pilas.actores.NaveRoja(y = -200)
-    naveroja.escala = 0.5
-    naveroja.aprender(pilas.habilidades.LimitadoABordesDePantalla)
-    naveroja.definir_enemigos(enemigos,puntaje.aumentar)
-    pilas.colisiones.agregar(naveroja, enemigos, naveroja.eliminar)
-    
-    
-    pilas.avisar("Dispara a la Burbuja Blanca.")
+    def actualizar(self):
+        self.x -= 5
+        pilasengine.actores.Actor.actualizar(self)
 
-    def salir():
+class Item(pilasengine.actores.Actor):
+
+    def iniciar(self):
+        self.imagen = 'blanca.png'
+        self.escala = 0.5
+        self.izquierda = 320
+        self.y = random.randint(-210, 210)
+        self.decir("Hola") 
+       
+
+    def actualizar(self):
+        self.izquierda -= 5
+
+        if self.derecha < -320:
+            self.eliminar()
+
+
+
+
+pilas = pilasengine.iniciar(capturar_errores=False)
+
+actor=Enemigo(pilas)
+
+puntos = pilas.actores.Puntaje(x=-290, y=210)
+nave = Nave(pilas)
+items = []
+enemigos = []
+
+def crear_item():
+    un_item = Item(pilas)
+    items.append(un_item)
+    return True
+
+pilas.tareas.agregar(2, crear_item)
+
+
+def cuanto_toca_item(v, i):
+    i.eliminar()
+    puntos.aumentar(1)
+    puntos.escala = 2
+    puntos.escala = [1], 0.2
+    puntos.rotacion = random.randint(30, 60)
+    puntos.rotacion = [0], 0.2
+
+pilas.colisiones.agregar(nave, items, cuanto_toca_item)
+
+
+def crear_enemigo():
+    un_enemigo = Enemigo(pilas)
+    enemigos.append(un_enemigo)
+    return True
+
+pilas.tareas.agregar(3.3, crear_enemigo)
+
+
+def cuanto_toca_enemigo(nave, enemigo):
+    nave.perder()
+    
+   
+
+pilas.colisiones.agregar(nave, enemigos, cuanto_toca_enemigo)
+
+
+def salir():
         pilas.eliminar()
-        
-    opciones = pilas.interfaz.ListaSeleccion(['Score'], salir)
-    opciones.x = +195
-    opciones.y = +178
+           
     
-
 def salir_del_juego():
     
-    class Alien(pilasengine.actores.Actor):
-
-       def iniciar(self):
-         self.imagen = "alien.png"
-         self.x = 0
-         self.y = -160
-         self.escala = 1
-    alien = Alien(pilas)
-    alien.decir(u"¡Animate, juega!")
-
+    pilas.terminar()
+         
+fondojuego=pilas.fondos.Fondo()
+fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
+fondojuego=True        
 menu=pilas.actores.Menu([
         ('Comenzar Juego', comenzar_juego),
         ('Salir', salir_del_juego),
         ])
-        
+
 
 
 pilas.ejecutar()
