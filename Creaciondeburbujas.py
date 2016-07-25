@@ -1,13 +1,24 @@
-
+#TRABAJO GRUPAL 
+# Integrantes: Diana Bermeo-Ximena Briceño
+# Importar librerias
 import pilasengine
 import os
 import random
+#Linea de codigo para agregar musica
 sonido1 = pilas.musica.cargar('burbujita.mp3')
 sonido1.reproducir()
+#Linea de codigo para poder iniciar pilas
 pilas = pilasengine.iniciar()
+# Parte del menu , donde se realizaa todas las lineas dde coigo escritas si el usuario elige comenzar_juego
 def comenzar_juego():
+    #Cuando comienza el juego el menu, desaparece
         menu.eliminar()
+    # La nave se hace mas pequeña
+        nave.escala= 0.1
+    # Se cambia el fondo del juego
         fondo=pilas.fondos.Galaxia()
+        pilas.avisar('Gana puntos solo con las burbujas blancas')
+#Creando una clase llamada Estado para la posicion de la nave
 class Estado:
 
     
@@ -18,41 +29,7 @@ class Estado:
     def iniciar(self):
         pass
         
-       
-class Ingresando(Estado):
-
-    def iniciar(self):
-    
-        self.nave.definir_animacion([3, 4])
-        self.contador = 0
-        self.nave.x = -200
-        self.nave.x = [-200], 0.5
-
-    def actualizar(self):
-        self.contador += 1
-
-        if self.contador > 50:
-            self.nave.estado = Volando(self.nave)
-
-class Volando(Estado):
-
-    def iniciar(self):
-        self.nave.definir_animacion([3, 4])
-        self.nave.decir('A jugar')
-    def actualizar(self):
-        velocidad = 5
-
-        if pilas.escena.control.arriba:
-            self.nave.y += velocidad
-        elif pilas.escena.control.abajo:
-            self.nave.y -= velocidad
-
-        if self.nave.y > 210:
-            self.nave.y = 210
-        elif self.nave.y < -210:
-            self.nave.y = -210
-
-
+  #Clase que ejecutara lineas de codigo cuando la nave pierda  
 class Perdiendo(Estado):
 
     def iniciar(self):
@@ -67,11 +44,11 @@ class Perdiendo(Estado):
         self.velocidad += 0.2
         self.nave.y -= 1
 
-
+#Creando una clase para el actor nave
 class Nave(pilasengine.actores.Actor):
 
     def iniciar(self):
-        
+        # Se crea un nuevo actor  de una imagen y se lo personaliza
         self.imagen = "combatiente.png"
         self.definir_animacion([0])
         self.centro = (140, 59)
@@ -96,11 +73,8 @@ class Nave(pilasengine.actores.Actor):
             self.contador = 0
             self.paso += 1
 
-            if self.paso >= len(self.cuadros):
-                self.paso = 0
-
-        self.imagen.definir_cuadro(self.cuadros[self.paso])
-
+           
+#Lineas de codigo para cuando la nave pierda
     def perder(self):
         self.estado = Perdiendo(self)
         t = pilas.actores.Texto("Game Over")
@@ -109,7 +83,7 @@ class Nave(pilasengine.actores.Actor):
         sonido2.reproducir()
         t.escala = 0
         t.escala = [3], 0.5
-
+#Clase que sirve para crear la burbuja roja
 class Enemigo(pilasengine.actores.Actor):
 
     def iniciar(self):
@@ -123,14 +97,14 @@ class Enemigo(pilasengine.actores.Actor):
         self.x -= 5
         pilasengine.actores.Actor.actualizar(self)
 
-class Item(pilasengine.actores.Actor):
+class Burbuja(pilasengine.actores.Actor):
 
     def iniciar(self):
         self.imagen = 'blanca.png'
         self.escala = 0.5
         self.izquierda = 320
         self.y = random.randint(-210, 210)
-        self.decir("Revientame") 
+        
        
 
     def actualizar(self):
@@ -144,19 +118,19 @@ class Item(pilasengine.actores.Actor):
 
 pilas = pilasengine.iniciar(capturar_errores=False)
 
-   
+ # Linea de codigo paue crea el nuevo fondo  
 fondojuego=pilas.fondos.Fondo()
 fondojuego.imagen=pilas.imagenes.cargar("fondojuego.jpg")
 fondojuego=True
 actor=Enemigo(pilas)
-
+# Linea de codigo que cuenta los puntajes de las burbujas blancas
 puntos = pilas.actores.Puntaje(200,200, color= pilas.colores.blanco)
 nave = Nave(pilas)
 items = []
 enemigos = []
 
 def crear_item():
-    un_item = Item(pilas)
+    un_item = Burbuja(pilas)
     items.append(un_item)
     return True
 
@@ -191,20 +165,24 @@ pilas.colisiones.agregar(nave, enemigos, cuanto_toca_enemigo)
 
 
 def salir():
+        
+        opciones = pilas.interfaz.ListaSeleccion(['Score'], salir_del_juego)
+        opciones.x = +200
+        opciones.y = +200    
         pilas.eliminar()
-        opciones = pilas.interfaz.ListaSeleccion(['Score'], salir)
-        opciones.x = +195
-        opciones.y = +178   
-    
+#Si elige la opcion salir el juego terminara
+    # El sonido se detedra
 def salir_del_juego():
     
     pilas.terminar()
-         
+    sonido1.detener() 
 
-
+#Codigo del menu
 menu=pilas.actores.Menu([
         ('Comenzar Juego', comenzar_juego),
         ('Salir', salir_del_juego),
         ])
-pilas.avisar('Bienvenidos a Whitebublle')
+pilas.avisar('Bienvenidos a Whitebubble')
+nave.escala = -0.1
+
 pilas.ejecutar()
